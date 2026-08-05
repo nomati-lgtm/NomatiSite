@@ -99,7 +99,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               {/* Ícone de Contato / E-mail */}
               <a
-                href="mailto:lauanebarbosa@unifei.edu.br"
+                href="lauanepr@outlook.com"
                 title="Enviar e-mail para Lauane"
                 className="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition text-white flex items-center gap-2 text-sm font-medium"
               >
