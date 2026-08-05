@@ -48,7 +48,7 @@ export default function Footer() {
                 className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition text-white flex items-center gap-2 text-base font-medium"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="nomati@unifei.edu.br"
                   className="w-6 h-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ export default function Footer() {
 
               {/* LinkedIn */}
               <a
-                href="https://www.linkedin.com/"
+                href="https://www.linkedin.com/in/nomati-n%C3%BAcleo-de-otimiza%C3%A7%C3%A3o-da-manufatura-e-tecnologia-da-inova%C3%A7%C3%A3o-ppgep-iepg-unifei-3a3327250/"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="LinkedIn do NOMATI"
