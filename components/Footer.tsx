@@ -41,14 +41,14 @@ export default function Footer() {
             <div className="flex items-center gap-4">
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/"
+                href="mailto:nomati@unifei.edu.br"
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Instagram do NOMATI"
+                title="EMAIL NOMATI"
                 className="p-3 bg-white/10 hover:bg-white/20 rounded-xl transition text-white flex items-center gap-2 text-base font-medium"
               >
                 <svg
-                  xmlns="nomati@unifei.edu.br"
+                  xmlns="http://www.w3.org/2000/svg"
                   className="w-6 h-6"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -99,12 +99,12 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               {/* Ícone de Contato / E-mail */}
               <a
-                href="lauanepr@outlook.com"
+                href="mailto:lauanepr@outlook.com"
                 title="Enviar e-mail para Lauane"
                 className="p-2.5 bg-white/10 hover:bg-white/20 rounded-xl transition text-white flex items-center gap-2 text-sm font-medium"
               >
                 <svg
-                  xmlns="lauanepr@outlook.com"
+                  xmlns="ttp://www.w3.org/2000/svg"
                   className="w-5 h-5"
                   fill="none"
                   viewBox="0 0 24 24"
