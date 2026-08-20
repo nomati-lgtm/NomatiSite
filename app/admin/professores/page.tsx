@@ -7,12 +7,12 @@ import Link from 'next/link';
 interface Professor {
   id: string;
   nome: string;
-  cargo: string;
-  email: string;
-  biografia: string;
-  lattes_url: string;
-  scholar_url: string;
+  sala: string;
   foto_url: string;
+  site: string;
+  lattes: string;
+  linkedin: string;
+  biografia: string;
 }
 
 export default function AdminProfessores() {
@@ -20,11 +20,11 @@ export default function AdminProfessores() {
   const [profEditando, setProfEditando] = useState<Professor | null>(null);
 
   const [nome, setNome] = useState('');
-  const [cargo, setCargo] = useState('');
-  const [email, setEmail] = useState('');
+  const [sala, setSala] = useState('');
+  const [site, setSite] = useState('');
+  const [lattes, setLattes] = useState('');
+  const [linkedin, setLinkedin] = useState('');
   const [biografia, setBiografia] = useState('');
-  const [lattesUrl, setLattesUrl] = useState('');
-  const [scholarUrl, setScholarUrl] = useState('');
   const [fotoFile, setFotoFile] = useState<File | null>(null);
   const [salvando, setSalvando] = useState(false);
 
@@ -40,22 +40,22 @@ export default function AdminProfessores() {
   const iniciarEdicao = (item: Professor) => {
     setProfEditando(item);
     setNome(item.nome || '');
-    setCargo(item.cargo || '');
-    setEmail(item.email || '');
+    setSala(item.sala || '');
+    setSite(item.site || '');
+    setLattes(item.lattes || '');
+    setLinkedin(item.linkedin || '');
     setBiografia(item.biografia || '');
-    setLattesUrl(item.lattes_url || '');
-    setScholarUrl(item.scholar_url || '');
     setFotoFile(null);
   };
 
   const limparFormulario = () => {
     setProfEditando(null);
     setNome('');
-    setCargo('');
-    setEmail('');
+    setSala('');
+    setSite('');
+    setLattes('');
+    setLinkedin('');
     setBiografia('');
-    setLattesUrl('');
-    setScholarUrl('');
     setFotoFile(null);
   };
 
@@ -82,11 +82,11 @@ export default function AdminProfessores() {
 
     const payload = {
       nome,
-      cargo,
-      email,
+      sala,
+      site,
+      lattes,
+      linkedin,
       biografia,
-      lattes_url: lattesUrl,
-      scholar_url: scholarUrl,
       foto_url,
     };
 
@@ -167,23 +167,22 @@ export default function AdminProfessores() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Cargo / Titulação</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Sala (Opcional)</label>
                     <input 
                       type="text" 
-                      required 
-                      value={cargo} 
-                      onChange={(e) => setCargo(e.target.value)} 
-                      placeholder="Ex: Prof. Doutor" 
+                      value={sala} 
+                      onChange={(e) => setSala(e.target.value)} 
+                      placeholder="Ex: Sala 204 - Bloco B" 
                       className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">E-mail</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Site Pessoal (Opcional)</label>
                     <input 
-                      type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      placeholder="email@unifei.edu.br" 
+                      type="url" 
+                      value={site} 
+                      onChange={(e) => setSite(e.target.value)} 
+                      placeholder="https://..." 
                       className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                     />
                   </div>
@@ -191,7 +190,7 @@ export default function AdminProfessores() {
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">
-                    {profEditando ? 'Substituir Foto de Perfil (Opcional)' : 'Foto de Perfil'}
+                    {profEditando ? 'Substituir Foto de Perfil (Opcional)' : 'Foto de Perfil (Opcional)'}
                   </label>
                   <input 
                     type="file" 
@@ -203,34 +202,34 @@ export default function AdminProfessores() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Link Currículo Lattes</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Currículo Lattes (Opcional)</label>
                     <input 
                       type="url" 
-                      value={lattesUrl} 
-                      onChange={(e) => setLattesUrl(e.target.value)} 
+                      value={lattes} 
+                      onChange={(e) => setLattes(e.target.value)} 
                       placeholder="https://lattes.cnpq.br/..." 
                       className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Google Scholar</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">LinkedIn (Opcional)</label>
                     <input 
                       type="url" 
-                      value={scholarUrl} 
-                      onChange={(e) => setScholarUrl(e.target.value)} 
-                      placeholder="https://scholar.google..." 
+                      value={linkedin} 
+                      onChange={(e) => setLinkedin(e.target.value)} 
+                      placeholder="https://linkedin.com/in/..." 
                       className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Biografia / Apresentação</label>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Biografia / Apresentação (Sem limite de caracteres)</label>
                   <textarea 
-                    rows={4} 
+                    rows={5} 
                     value={biografia} 
                     onChange={(e) => setBiografia(e.target.value)} 
-                    placeholder="Breve biografia do professor..." 
+                    placeholder="Escreva a biografia completa do professor..." 
                     className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                   />
                 </div>
@@ -274,7 +273,7 @@ export default function AdminProfessores() {
                       )}
                       <div>
                         <p className="font-bold text-base text-slate-800 line-clamp-1">{item.nome}</p>
-                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5 line-clamp-1">{item.cargo}</p>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5 line-clamp-1">{item.sala || 'Sala não informada'}</p>
                       </div>
                     </div>
 

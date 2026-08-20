@@ -32,7 +32,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between gap-6 py-6">
             <div className="flex items-center gap-6">
               <img
-                src="logo.jpg"
+                src="logo.png"
                 alt="NOMATI"
                 className="h-16 md:h-24 w-auto object-contain"
               />

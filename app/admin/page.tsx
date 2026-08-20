@@ -40,6 +40,13 @@ export default function AdminDashboard() {
 
   const modulos = [
     {
+      titulo: 'Textos, Estilos e Power BI',
+      rota: '/admin/conteudo', // ou /admin se você unificou tudo na mesma página
+      descricao: 'Editar todo o conteúdo textual do site, seções e o link de incorporação do painel Power BI.',
+      icone: '🎨',
+      cor: 'border-indigo-500/20 hover:border-indigo-500',
+    },
+    {
       titulo: 'Notícias',
       rota: '/admin/noticias',
       descricao: 'Cadastrar, editar e excluir notícias publicadas no site.',
@@ -47,7 +54,7 @@ export default function AdminDashboard() {
       cor: 'border-blue-500/20 hover:border-blue-500',
     },
     {
-      titulo: 'Professores',
+      titulo: 'Professores / Equipe',
       rota: '/admin/professores',
       descricao: 'Gerenciar membros da equipe, fotos de perfil e links.',
       icone: '👨‍🏫',
@@ -84,6 +91,13 @@ export default function AdminDashboard() {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="bg-slate-100 text-slate-700 px-6 py-3.5 rounded-2xl text-base font-bold hover:bg-slate-200 transition"
+            >
+              Ver Site ↗
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-red-50 text-red-600 px-6 py-3.5 rounded-2xl text-base font-bold hover:bg-red-100 transition"
@@ -94,7 +108,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* MÓDULOS DE GERENCIAMENTO */}
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {modulos.map((mod) => (
             <Link
               key={mod.rota}

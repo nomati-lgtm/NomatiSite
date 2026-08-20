@@ -46,6 +46,7 @@ export default function Home() {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [documentos, setDocumentos] = useState<Documento[]>([]);
   const [publicacoes, setPublicacoes] = useState<Publicacao[]>([]);
+  const [textosSite, setTextosSite] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   // Estados dos Modais / Filtros
@@ -61,17 +62,26 @@ export default function Home() {
       try {
         setLoading(true);
        
-        const [profRes, notRes, docRes, pubRes] = await Promise.all([
+        const [profRes, notRes, docRes, pubRes, conteudoRes] = await Promise.all([
           supabase.from('professores').select('*'),
           supabase.from('noticias').select('*').order('id', { ascending: false }).limit(3),
           supabase.from('documentos').select('*'),
           supabase.from('publicacoes').select('*'),
+          supabase.from('conteudos_site').select('*'),
         ]);
 
         if (profRes.data) setListaProfessores(profRes.data);
         if (notRes.data) setNoticias(notRes.data);
         if (docRes.data) setDocumentos(docRes.data);
         if (pubRes.data) setPublicacoes(pubRes.data);
+       
+        if (conteudoRes.data) {
+          const mapaTextos = conteudoRes.data.reduce((acc: Record<string, string>, curr: any) => {
+            acc[curr.chave] = curr.conteudo;
+            return acc;
+          }, {});
+          setTextosSite(mapaTextos);
+        }
       } catch (error) {
         console.error('Erro ao buscar dados do Supabase:', error);
       } finally {
@@ -82,29 +92,65 @@ export default function Home() {
     carregarDados();
   }, []);
 
+  const parseLista = (chave: string, valorPadrao: string[]) => {
+    try {
+      if (textosSite[chave]) {
+        return JSON.parse(textosSite[chave]);
+      }
+    } catch {
+      if (textosSite[chave]) {
+        return textosSite[chave].split('\n').filter(Boolean);
+      }
+    }
+    return valorPadrao;
+  };
+
+  const listaObjetivos = parseLista('lista_objetivos', [
+    "Integração entre grupos de pesquisa do IEPG, promovendo trabalhos interdisciplinares e colaborativos.",
+    "Estímulo à inovação, através de pesquisas voltadas ao desenvolvimento de produtos e processos industriais inteligentes.",
+    "Ampliação da participação da UNIFEI em projetos cooperativos de P&D&I (Pesquisa, Desenvolvimento e Inovação).",
+    "Promoção de estudos avançados em IA e Machine Learning, aplicados à manufatura, otimização de processos e análise preditiva.",
+    "Criação de eventos científicos e técnicos voltados para as áreas de atuação do núcleo.",
+    "Prestação de serviços especializados para empresas, incluindo consultorias e desenvolvimento de soluções inovadoras.",
+    "Apoio à pré-incubação e incubação de startups de base tecnológica, fornecendo expertise em otimização, automação e tecnologias emergentes."
+  ]);
+
+  const listaEspec = parseLista('lista_especialidades', [
+    "Pesquisa Operacional",
+    "Otimização",
+    "Inteligência Artificial",
+    "Machine Learning",
+    "Indústria 4.0",
+    "Simulação"
+  ]);
+
   return (
     <main className="bg-slate-50 min-h-screen">
 
       {/* HERO & NOTÍCIAS */}
-      <section className="w-full max-w-[90rem] mx-auto px-8 lg:px-16 py-12">
-        <div className="grid lg:grid-cols-2 gap-12">
+      <section className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12 py-16">
+        <div className="grid lg:grid-cols-2 gap-8">
           <div>
             <img
-              src="https://tse2.mm.bing.net/th/id/OIP.5nISpExTooHzkZdzygl4ngHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+              src={textosSite.foto_principal || ""}
               alt="NOMATI"
               className="w-full h-[450px] object-cover rounded-3xl shadow-xl"
             />
-            <div className="mt-6 text-center">
-              <p className="text-xl font-medium text-slate-700">Av. BPS, 1303, bairro Pinheirinho</p>
-              <p className="text-xl font-medium text-slate-700">Itajubá/MG – CEP 37500-903</p>
+            <div className="mt-6 text-center space-y-2">
+              <p className="text-xl font-medium text-slate-700">
+                {textosSite.endereco_rua || 'Av. BPS, 1303, bairro Pinheirinho'}
+              </p>
+              <p className="text-xl font-medium text-slate-700">
+                {textosSite.endereco_cep || 'Itajubá/MG – CEP 37500-903'}
+              </p>
             </div>
           </div>
 
           <div>
-            <div className="bg-white h-full rounded-3xl shadow-xl p-8 border flex flex-col justify-between">
+            <div className="bg-white h-full rounded-3xl shadow-xl p-8 sm:p-10 border flex flex-col justify-between">
               <div>
                 <h2 className="text-4xl font-bold text-center text-[#0D3B66] mb-8">
-                  NOTÍCIAS
+                  {textosSite.titulo_noticias || 'NOTÍCIAS'}
                 </h2>
 
                 <div className="space-y-6">
@@ -158,45 +204,43 @@ export default function Home() {
       </section>
 
       {/* SOBRE NÓS */}
-      <section id="sobre" className="w-full max-w-[90rem] mx-auto px-8 lg:px-16 py-20">
-        <h2 className="text-4xl font-bold text-[#0D3B66] mb-8">Sobre Nós</h2>
-        <div className="bg-white rounded-3xl shadow-lg p-8 md:p-16 space-y-12 text-slate-600">
+      <section id="sobre" className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12 py-16">
+        <h2 className="text-4xl font-bold text-[#0D3B66] mb-8">{textosSite.titulo_sobre || 'Sobre Nós'}</h2>
+        <div className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 space-y-12 text-slate-600">
           <div className="space-y-4">
-            <p className="text-lg leading-relaxed">
-              O <strong className="text-slate-800">Núcleo de Otimização da Manufatura e de Tecnologia da Inovação (NOMATI)</strong> desenvolve pesquisas aplicadas nas áreas de sistemas de manufatura, projeto e desenvolvimento de produtos, gestão da inovação e gestão da qualidade.
-            </p>
-            <p className="text-lg leading-relaxed">
-              Com um enfoque multidisciplinar, o grupo também atua fortemente em <strong className="text-slate-800">Inteligência Artificial (IA) e Machine Learning (ML)</strong>, explorando técnicas avançadas para otimização de processos industriais, predição de variáveis críticas e automação inteligente.
-            </p>
+            <p
+              className="text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: textosSite.sobre_p1 || 'O <strong class="text-slate-800">Núcleo de Otimização da Manufatura e de Tecnologia da Inovação (NOMATI)</strong> desenvolve pesquisas aplicadas nas áreas de sistemas de manufatura, projeto e desenvolvimento de produtos, gestão da inovação e gestão da qualidade.'
+              }}
+            />
+            <p
+              className="text-lg leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: textosSite.sobre_p2 || 'Com um enfoque multidisciplinar, o grupo também atua fortemente em <strong class="text-slate-800">Inteligência Artificial (IA) e Machine Learning (ML)</strong>, explorando técnicas avançadas para otimização de processos industriais, predição de variáveis críticas e automação inteligente.'
+              }}
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100">
-              <h3 className="text-xl font-bold text-[#0D3B66] mb-2">Foco Regional e Parcerias</h3>
+            <div className="p-8 sm:p-10 bg-slate-50 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-[#0D3B66] mb-2">{textosSite.sobre_card1_titulo || 'Foco Regional e Parcerias'}</h3>
               <p className="text-base leading-relaxed">
-                Por meio de parcerias estratégicas com empresas e instituições públicas e privadas, o NOMATI busca ser um agente de desenvolvimento e inovação, contribuindo para o avanço do conhecimento dentro da UNIFEI, no município e na região.
+                {textosSite.sobre_card1_texto || 'Por meio de parcerias estratégicas com empresas e instituições públicas e privadas, o NOMATI busca ser um agente de desenvolvimento e inovação, contribuindo para o avanço do conhecimento dentro da UNIFEI, no município e na região.'}
               </p>
             </div>
-            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100">
-              <h3 className="text-xl font-bold text-[#0D3B66] mb-2">Pesquisa Aplicada</h3>
+            <div className="p-8 sm:p-10 bg-slate-50 rounded-2xl border border-slate-100">
+              <h3 className="text-xl font-bold text-[#0D3B66] mb-2">{textosSite.sobre_card2_titulo || 'Pesquisa Aplicada'}</h3>
               <p className="text-base leading-relaxed">
-                O grupo realiza pesquisas aplicadas voltadas para a redução de desperdício de materiais, automação de processos produtivos, análise preditiva em manufatura e otimização de processos decisórios por meio de IA.
+                {textosSite.sobre_card2_texto || 'O grupo realiza pesquisas aplicadas voltadas para a redução de desperdício de materiais, automação de processos produtivos, análise preditiva em manufatura e otimização de processos decisórios por meio de IA.'}
               </p>
             </div>
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-[#0D3B66]">Os objetivos do grupo incluem:</h3>
+            <h3 className="text-2xl font-bold text-[#0D3B66]">{textosSite.titulo_objetivos || 'Os objetivos do grupo incluem:'}</h3>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
-              {[
-                "Integração entre grupos de pesquisa do IEPG, promovendo trabalhos interdisciplinares e colaborativos.",
-                "Estímulo à inovação, através de pesquisas voltadas ao desenvolvimento de produtos e processos industriais inteligentes.",
-                "Ampliação da participação da UNIFEI em projetos cooperativos de P&D&I (Pesquisa, Desenvolvimento e Inovação).",
-                "Promoção de estudos avançados em IA e Machine Learning, aplicados à manufatura, otimização de processos e análise preditiva.",
-                "Criação de eventos científicos e técnicos voltados para as áreas de atuação do núcleo.",
-                "Prestação de serviços especializados para empresas, incluindo consultorias e desenvolvimento de soluções inovadoras.",
-                "Apoio à pré-incubação e incubação de startups de base tecnológica, fornecendo expertise em otimização, automação e tecnologias emergentes."
-              ].map((objetivo, index) => (
+              {listaObjetivos.map((objetivo: string, index: number) => (
                 <li key={index} className="flex items-start space-x-3 text-base">
                   <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[#0D3B66]/10 text-[#0D3B66] flex items-center justify-center font-bold text-xs mt-1">
                     ✓
@@ -208,20 +252,20 @@ export default function Home() {
           </div>
 
           <div className="p-8 bg-[#0D3B66] text-white rounded-2xl shadow-inner space-y-3">
-            <h3 className="text-xl font-bold">Infraestrutura Laboratorial</h3>
+            <h3 className="text-xl font-bold">{textosSite.infra_titulo || 'Infraestrutura Laboratorial'}</h3>
             <p className="text-base leading-relaxed opacity-90">
-              O NOMATI conta com infraestrutura laboratorial moderna, incluindo laboratórios de usinagem, soldagem e Inovação de Produtos (LIP), que dispõem de máquina de prototipagem rápida, Scanner 3D e outras tecnologias voltadas para pesquisa e inovação.
+              {textosSite.infra_texto || 'O NOMATI conta com infraestrutura laboratorial moderna, incluindo laboratórios de usinagem, soldagem e Inovação de Produtos (LIP), que dispõem de máquina de prototipagem rápida, Scanner 3D e outras tecnologias voltadas para pesquisa e inovação.'}
             </p>
           </div>
 
           <p className="text-center text-lg italic text-slate-500 font-medium pt-6 border-t border-slate-100">
-            "Com sua atuação em modelagem matemática, otimização e inteligência computacional, o grupo se consolida como referência na aplicação de IA e Machine Learning na indústria e na inovação tecnológica, impactando positivamente o setor produtivo e a sociedade."
+            {textosSite.citacao_rodape || '"Com sua atuação em modelagem matemática, otimização e inteligência computacional, o grupo se consolida como referência na aplicação de IA e Machine Learning na indústria e na inovação tecnológica, impactando positivamente o setor produtivo e a sociedade."'}
           </p>
         </div>
       </section>
 
       {/* EQUIPE */}
-      <section id="equipe" className="w-full max-w-[90rem] mx-auto px-8 lg:px-16 py-20">
+      <section id="equipe" className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12 py-16">
         <h2 className="text-4xl font-bold text-[#0D3B66] mb-10">Nossa Equipe</h2>
 
         {loading ? (
@@ -231,7 +275,7 @@ export default function Home() {
             {listaProfessores.map((prof, index) => (
               <div
                 key={prof.id || index}
-                className="bg-white rounded-3xl shadow-lg p-8 text-center hover:-translate-y-2 transition cursor-pointer"
+                className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-center hover:-translate-y-2 transition cursor-pointer"
                 onClick={() => setProfessorSelecionado(prof)}
               >
                 <img
@@ -286,21 +330,14 @@ export default function Home() {
       </section>
 
       {/* ESPECIALIDADES */}
-      <section id="especialidades" className="bg-white py-20">
-        <div className="w-full max-w-[90rem] mx-auto px-8 lg:px-16">
+      <section id="especialidades" className="bg-white py-16">
+        <div className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12">
           <h2 className="text-4xl font-bold text-[#0D3B66] mb-10">Especialidades</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              "Pesquisa Operacional",
-              "Otimização",
-              "Inteligência Artificial",
-              "Machine Learning",
-              "Indústria 4.0",
-              "Simulação"
-            ].map((item) => (
+            {listaEspec.map((item: string) => (
               <div
                 key={item}
-                className="bg-slate-50 rounded-3xl p-8 shadow-lg font-bold text-xl text-[#0D3B66] text-center"
+                className="bg-slate-50 rounded-3xl p-8 sm:p-10 shadow-lg font-bold text-xl text-[#0D3B66] text-center"
               >
                 {item}
               </div>
@@ -310,14 +347,14 @@ export default function Home() {
       </section>
 
       {/* PUBLICAÇÕES */}
-      <section id="publicacoes" className="w-full max-w-[90rem] mx-auto px-8 lg:px-16 py-20">
+      <section id="publicacoes" className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12 py-16">
         <h2 className="text-4xl font-bold text-[#0D3B66] mb-10">Publicações</h2>
         <div className="grid md:grid-cols-3 gap-8">
           {['graduacao', 'mestrado', 'doutorado'].map((tipo) => (
             <button
               key={tipo}
               onClick={() => setTipoPubAtivo(tipoPubAtivo === tipo ? null : tipo)}
-              className="bg-white rounded-3xl shadow-lg p-8 text-left hover:border-2 hover:border-[#0D3B66] transition capitalize font-bold text-2xl text-[#0D3B66] flex justify-between items-center"
+              className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-left hover:border-2 hover:border-[#0D3B66] transition capitalize font-bold text-2xl text-[#0D3B66] flex justify-between items-center"
             >
               <span>{tipo}</span>
               <span>→</span>
@@ -326,7 +363,7 @@ export default function Home() {
         </div>
 
         {tipoPubAtivo && (
-          <div className="mt-8 bg-white p-8 rounded-3xl shadow-xl border">
+          <div className="mt-8 bg-white p-8 sm:p-10 rounded-3xl shadow-xl border">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold capitalize text-[#0D3B66]">
                 Publicações: {tipoPubAtivo}
@@ -367,15 +404,15 @@ export default function Home() {
       </section>
 
       {/* DOCUMENTOS */}
-      <section id="documentos" className="bg-white py-20">
-        <div className="w-full max-w-[90rem] mx-auto px-8 lg:px-16">
+      <section id="documentos" className="bg-white py-16">
+        <div className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12">
           <h2 className="text-4xl font-bold text-[#0D3B66] mb-10">Documentos</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {['templates', 'formularios', 'normas', 'regulamentos'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoriaDocAtiva(categoriaDocAtiva === cat ? null : cat)}
-                className="bg-slate-50 p-8 rounded-3xl shadow hover:bg-[#0D3B66] hover:text-white transition font-bold text-xl capitalize text-left"
+                className="bg-slate-50 p-8 sm:p-10 rounded-3xl shadow hover:bg-[#0D3B66] hover:text-white transition font-bold text-xl capitalize text-left"
               >
                 {cat}
               </button>
@@ -383,7 +420,7 @@ export default function Home() {
           </div>
 
           {categoriaDocAtiva && (
-            <div className="mt-8 bg-slate-100 p-8 rounded-3xl border">
+            <div className="mt-8 bg-slate-100 p-8 sm:p-10 rounded-3xl border">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold capitalize text-[#0D3B66]">
                   Categoria: {categoriaDocAtiva}
@@ -425,9 +462,9 @@ export default function Home() {
       </section>
 
       {/* EM NÚMEROS */}
-      <section id="numeros" className="w-full max-w-[90rem] mx-auto px-8 lg:px-16 py-20">
+      <section id="numeros" className="w-full max-w-[92rem] mx-auto px-4 sm:px-8 lg:px-12 py-16">
         <h2 className="text-4xl font-bold text-[#0D3B66] mb-10">Em Números</h2>
-        <div className="bg-white rounded-3xl shadow-xl p-10 text-center">
+        <div className="bg-white rounded-3xl shadow-xl p-8 sm:p-10 text-center">
           <h3 className="text-2xl font-semibold text-[#0D3B66]">Power BI</h3>
           <p className="mt-4 text-slate-500">
             O painel Power BI será incorporado aqui.
