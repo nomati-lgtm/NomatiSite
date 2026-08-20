@@ -1,85 +1,169 @@
+'use client';
+
+import { useState } from 'react';
+
 type Professor = {
-  nome:string;
-  foto:string;
-  sala:string;
-  site:string;
-  lattes:string;
-  linkedin:string;
+  nome: string;
+  foto: string;
+  sala: string;
+  site: string;
+  lattes: string;
+  linkedin: string;
+  biografia?: string; // Adicionado para suportar a biografia
 };
 
 export default function ProfessorCard({
   professor
-}:{
-  professor:Professor
-}){
+}: {
+  professor: Professor
+}) {
+  const [modalAberto, setModalAberto] = useState(false);
 
-  return(
-
-    <div className="
-      bg-white
-      rounded-3xl
-      shadow-lg
-      p-8
-      text-center
-      hover:shadow-2xl
-      transition
-    ">
-
-      <img
-        src={professor.foto}
-        alt={professor.nome}
-        className="
-          w-40
-          h-40
-          mx-auto
-          rounded-full
-          object-cover
-          border-4
-          border-[#0D3B66]
-        "
-      />
-
-      <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
-        {professor.nome}
-      </h3>
-
-      <p className="text-slate-500 mt-2">
-        {professor.sala}
-      </p>
-
+  return (
+    <>
+      {/* CARD PRINCIPAL COMPACTO */}
       <div className="
+        bg-white
+        rounded-3xl
+        shadow-lg
+        p-8
+        text-center
+        hover:shadow-2xl
+        transition
         flex
-        flex-wrap
-        justify-center
-        gap-2
-        mt-5
+        flex-col
+        items-center
+        justify-between
       ">
+        <div>
+          <img
+            src={professor.foto || 'https://via.placeholder.com/150'}
+            alt={professor.nome}
+            className="
+              w-40
+              h-40
+              mx-auto
+              rounded-full
+              object-cover
+              border-4
+              border-[#0D3B66]
+            "
+          />
 
-        <a
-          href={professor.site}
-          className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg"
-        >
-          Site
-        </a>
+          <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
+            {professor.nome}
+          </h3>
 
-        <a
-          href={professor.lattes}
-          className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg"
-        >
-          Lattes
-        </a>
+          <p className="text-slate-500 mt-2">
+            {professor.sala || 'Sala não informada'}
+          </p>
+        </div>
 
-        <a
-          href={professor.linkedin}
-          className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg"
-        >
-          LinkedIn
-        </a>
+        {/* Botão para abrir a biografia completa */}
+        {professor.biografia && (
+          <button
+            onClick={() => setModalAberto(true)}
+            className="mt-4 text-sm font-bold text-[#0D3B66] underline hover:text-[#0A2D4F] transition"
+          >
+            Ver Biografia Completa
+          </button>
+        )}
 
+        {/* Links de Redes/Sites */}
+        <div className="
+          flex
+          flex-wrap
+          justify-center
+          gap-2
+          mt-5
+        ">
+          {professor.site && (
+            <a
+              href={professor.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg text-sm"
+            >
+              Site
+            </a>
+          )}
+
+          {professor.lattes && (
+            <a
+              href={professor.lattes}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg text-sm"
+            >
+              Lattes
+            </a>
+          )}
+
+          {professor.linkedin && (
+            <a
+              href={professor.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#0D3B66] text-white px-3 py-2 rounded-lg text-sm"
+            >
+              LinkedIn
+            </a>
+          )}
+        </div>
       </div>
 
-    </div>
+      {/* MODAL / CAIXA FLUTUANTE COM SCROLL PARA A BIOGRAFIA */}
+      {modalAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Cabeçalho do Modal */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <h3 className="text-xl font-extrabold text-[#0D3B66]">
+                {professor.nome}
+              </h3>
+              <button
+                onClick={() => setModalAberto(false)}
+                className="text-slate-400 hover:text-slate-700 font-bold text-xl px-2 py-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
 
+            {/* Conteúdo com Rolagem (Scroll) */}
+            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-left">
+              <div className="flex items-center gap-4">
+                <img
+                  src={professor.foto || 'https://via.placeholder.com/150'}
+                  alt={professor.nome}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-[#0D3B66] shrink-0"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-slate-600">Sala: {professor.sala || 'Não informada'}</p>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-[#0D3B66] uppercase tracking-wider mb-2">Biografia</h4>
+                <p className="text-slate-700 leading-relaxed text-base whitespace-pre-line break-words">
+                  {professor.biografia}
+                </p>
+              </div>
+            </div>
+
+            {/* Rodapé do Modal */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setModalAberto(false)}
+                className="bg-[#0D3B66] text-white px-6 py-2.5 rounded-xl font-bold hover:bg-[#0A2D4F] transition text-sm"
+              >
+                Fechar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+    </>
   );
-
 }

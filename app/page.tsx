@@ -275,18 +275,29 @@ export default function Home() {
             {listaProfessores.map((prof, index) => (
               <div
                 key={prof.id || index}
-                className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-center hover:-translate-y-2 transition cursor-pointer"
-                onClick={() => setProfessorSelecionado(prof)}
+                className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-center hover:-translate-y-2 transition flex flex-col justify-between"
               >
-                <img
-                  src={prof.foto_url || prof.foto || '/placeholder.png'}
-                  alt={prof.nome}
-                  className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-[#0D3B66]"
-                />
-                <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
-                  {prof.nome}
-                </h3>
-                <p className="text-slate-500 mt-2">{prof.sala}</p>
+                <div>
+                  <img
+                    src={prof.foto_url || prof.foto || '/placeholder.png'}
+                    alt={prof.nome}
+                    className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-[#0D3B66]"
+                  />
+                  <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
+                    {prof.nome}
+                  </h3>
+                  <p className="text-slate-500 mt-2">{prof.sala || 'Sala não informada'}</p>
+                </div>
+
+                {/* Botão de ver biografia limpo */}
+                {prof.biografia && (
+                  <button
+                    onClick={() => setProfessorSelecionado(prof)}
+                    className="mt-4 text-sm font-bold text-[#0D3B66] underline hover:text-[#0A2D4F] transition"
+                  >
+                    Ver Biografia Completa
+                  </button>
+                )}
 
                 <div className="flex flex-wrap justify-center gap-2 mt-5">
                   {prof.site && (
@@ -506,66 +517,90 @@ export default function Home() {
         </div>
       )}
 
-      {/* --- MODAL DE DETALHES DO PROFESSOR --- */}
+      {/* --- MODAL DE DETALHES DO PROFESSOR (COM SCROLL E ALTURA MÁXIMA) --- */}
       {professorSelecionado && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-8 shadow-2xl relative text-center">
-            <button
-              onClick={() => setProfessorSelecionado(null)}
-              className="absolute top-6 right-6 text-slate-400 hover:text-slate-700 text-2xl font-bold"
-            >
-              ✕
-            </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Cabeçalho do Modal */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <h3 className="text-xl font-extrabold text-[#0D3B66]">
+                {professorSelecionado.nome}
+              </h3>
+              <button
+                onClick={() => setProfessorSelecionado(null)}
+                className="text-slate-400 hover:text-slate-700 font-bold text-xl px-2 py-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
 
-            <img
-              src={professorSelecionado.foto_url || professorSelecionado.foto || '/placeholder.png'}
-              alt={professorSelecionado.nome}
-              className="w-36 h-36 rounded-full object-cover mx-auto border-4 border-[#0D3B66] mb-4"
-            />
+            {/* Conteúdo com Rolagem (Scroll) */}
+            <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-left">
+              <div className="flex items-center gap-4">
+                <img
+                  src={professorSelecionado.foto_url || professorSelecionado.foto || '/placeholder.png'}
+                  alt={professorSelecionado.nome}
+                  className="w-20 h-20 rounded-full object-cover border-2 border-[#0D3B66] shrink-0"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-slate-600">Sala: {professorSelecionado.sala || 'Não informada'}</p>
+                </div>
+              </div>
 
-            <h3 className="text-2xl font-bold text-[#0D3B66]">
-              {professorSelecionado.nome}
-            </h3>
-            <p className="text-slate-500 mb-4">{professorSelecionado.sala}</p>
-
-            {professorSelecionado.biografia && (
-              <p className="text-slate-600 text-sm leading-relaxed mb-6 text-left bg-slate-50 p-4 rounded-xl border">
-                {professorSelecionado.biografia}
-              </p>
-            )}
-
-            <div className="flex justify-center gap-3">
-              {professorSelecionado.site && (
-                <a
-                  href={professorSelecionado.site}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#0D3B66] text-white px-4 py-2 rounded-lg text-sm"
-                >
-                  Website
-                </a>
-              )}
-              {professorSelecionado.lattes && (
-                <a
-                  href={professorSelecionado.lattes}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#0D3B66] text-white px-4 py-2 rounded-lg text-sm"
-                >
-                  Currículo Lattes
-                </a>
-              )}
-              {professorSelecionado.linkedin && (
-                <a
-                  href={professorSelecionado.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#0D3B66] text-white px-4 py-2 rounded-lg text-sm"
-                >
-                  LinkedIn
-                </a>
+              {professorSelecionado.biografia && (
+                <div>
+                  <h4 className="text-sm font-bold text-[#0D3B66] uppercase tracking-wider mb-2">Biografia</h4>
+                  <p className="text-slate-700 leading-relaxed text-base whitespace-pre-line break-words">
+                    {professorSelecionado.biografia}
+                  </p>
+                </div>
               )}
             </div>
+
+            {/* Rodapé com Botões de Links e Fechar */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex gap-2">
+                {professorSelecionado.site && (
+                  <a
+                    href={professorSelecionado.site}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#0D3B66] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2D4F] transition"
+                  >
+                    Site
+                  </a>
+                )}
+                {professorSelecionado.lattes && (
+                  <a
+                    href={professorSelecionado.lattes}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#0D3B66] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2D4F] transition"
+                  >
+                    Lattes
+                  </a>
+                )}
+                {professorSelecionado.linkedin && (
+                  <a
+                    href={professorSelecionado.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#0D3B66] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2D4F] transition"
+                  >
+                    LinkedIn
+                  </a>
+                )}
+              </div>
+
+              <button
+                onClick={() => setProfessorSelecionado(null)}
+                className="bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold hover:bg-slate-300 transition text-sm ml-auto"
+              >
+                Fechar
+              </button>
+            </div>
+
           </div>
         </div>
       )}
