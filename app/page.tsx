@@ -275,7 +275,8 @@ export default function Home() {
             {listaProfessores.map((prof, index) => (
               <div
                 key={prof.id || index}
-                className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-center hover:-translate-y-2 transition flex flex-col justify-between"
+                onClick={() => setProfessorSelecionado(prof)}
+                className="bg-white rounded-3xl shadow-lg p-8 sm:p-10 text-center hover:-translate-y-2 transition cursor-pointer flex flex-col justify-between"
               >
                 <div>
                   <img
@@ -286,18 +287,8 @@ export default function Home() {
                   <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
                     {prof.nome}
                   </h3>
-                  <p className="text-slate-500 mt-2">{prof.sala || 'Sala não informada'}</p>
+                  <p className="text-slate-500 mt-2">{prof.sala}</p>
                 </div>
-
-                {/* Botão de ver biografia limpo */}
-                {prof.biografia && (
-                  <button
-                    onClick={() => setProfessorSelecionado(prof)}
-                    className="mt-4 text-sm font-bold text-[#0D3B66] underline hover:text-[#0A2D4F] transition"
-                  >
-                    Ver Biografia Completa
-                  </button>
-                )}
 
                 <div className="flex flex-wrap justify-center gap-2 mt-5">
                   {prof.site && (
@@ -517,7 +508,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* --- MODAL DE DETALHES DO PROFESSOR (COM SCROLL E ALTURA MÁXIMA) --- */}
+      {/* --- MODAL DE DETALHES DO PROFESSOR ( COM SCROLL E ALTURA MÁXIMA ) --- */}
       {professorSelecionado && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
           <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -579,7 +570,7 @@ export default function Home() {
                     className="bg-[#0D3B66] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2D4F] transition"
                   >
                     Lattes
-                  </a>
+                </a>
                 )}
                 {professorSelecionado.linkedin && (
                   <a
