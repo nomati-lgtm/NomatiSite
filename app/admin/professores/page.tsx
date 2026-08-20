@@ -7,7 +7,7 @@ import Link from 'next/link';
 interface Professor {
   id: string;
   nome: string;
-  sala: string;
+  email: string;
   foto_url: string;
   site: string;
   lattes: string;
@@ -20,7 +20,7 @@ export default function AdminProfessores() {
   const [profEditando, setProfEditando] = useState<Professor | null>(null);
 
   const [nome, setNome] = useState('');
-  const [sala, setSala] = useState('');
+  const [email, setEmail] = useState('');
   const [site, setSite] = useState('');
   const [lattes, setLattes] = useState('');
   const [linkedin, setLinkedin] = useState('');
@@ -40,7 +40,7 @@ export default function AdminProfessores() {
   const iniciarEdicao = (item: Professor) => {
     setProfEditando(item);
     setNome(item.nome || '');
-    setSala(item.sala || '');
+    setEmail(item.email || '');
     setSite(item.site || '');
     setLattes(item.lattes || '');
     setLinkedin(item.linkedin || '');
@@ -51,7 +51,7 @@ export default function AdminProfessores() {
   const limparFormulario = () => {
     setProfEditando(null);
     setNome('');
-    setSala('');
+    setEmail('');
     setSite('');
     setLattes('');
     setLinkedin('');
@@ -82,7 +82,7 @@ export default function AdminProfessores() {
 
     const payload = {
       nome,
-      sala,
+      email,
       site,
       lattes,
       linkedin,
@@ -119,7 +119,6 @@ export default function AdminProfessores() {
 
   return (
     <main className="min-h-screen bg-slate-50 py-16 px-4 sm:px-8 lg:px-12 w-full">
-      {/* Aumentado o limite de largura para preencher melhor monitores grandes */}
       <div className="max-w-[105rem] mx-auto space-y-12 w-full">
         
         {/* CABEÇALHO */}
@@ -137,10 +136,10 @@ export default function AdminProfessores() {
           </Link>
         </div>
 
-        {/* LAYOUT PRINCIPAL: Grid otimizado para dar mais espaço de largura */}
+        {/* LAYOUT PRINCIPAL */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
           
-          {/* Formulário (Ocupa mais colunas para alargar a caixa de biografia) */}
+          {/* Formulário */}
           <div className="xl:col-span-7 bg-white p-8 sm:p-10 rounded-3xl shadow-sm border border-slate-200">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
@@ -168,12 +167,12 @@ export default function AdminProfessores() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Sala (Opcional)</label>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">E-mail (Opcional)</label>
                   <input 
-                    type="text" 
-                    value={sala} 
-                    onChange={(e) => setSala(e.target.value)} 
-                    placeholder="Ex: Sala 204 - Bloco B" 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    placeholder="Ex: professor@universidade.br" 
                     className="w-full border border-slate-200 p-4 rounded-2xl text-base focus:outline-none focus:border-[#0D3B66]" 
                   />
                 </div>
@@ -226,7 +225,6 @@ export default function AdminProfessores() {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Biografia / Apresentação (Sem limite de caracteres)</label>
-                {/* Altura inicial maior e resize ativado para permitir esticar à vontade */}
                 <textarea 
                   rows={8} 
                   value={biografia} 
@@ -248,7 +246,7 @@ export default function AdminProfessores() {
             </form>
           </div>
 
-          {/* Lista de Professores (Ocupa as colunas restantes) */}
+          {/* Lista de Professores */}
           <div className="xl:col-span-5 bg-white p-8 sm:p-10 rounded-3xl shadow-sm border border-slate-200">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-6">Professores Cadastrados</h2>
             <div className="space-y-4 max-h-[750px] overflow-y-auto pr-2">
@@ -274,7 +272,7 @@ export default function AdminProfessores() {
                       )}
                       <div className="min-w-0">
                         <p className="font-bold text-base text-slate-800 truncate">{item.nome}</p>
-                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5 truncate">{item.sala || 'Sala não informada'}</p>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-0.5 truncate">{item.email || 'E-mail não informado'}</p>
                       </div>
                     </div>
 

@@ -5,11 +5,11 @@ import { useState } from 'react';
 type Professor = {
   nome: string;
   foto: string;
-  sala: string;
+  email: string; // Atualizado de sala para email
   site: string;
   lattes: string;
   linkedin: string;
-  biografia?: string; // Adicionado para suportar a biografia
+  biografia?: string;
 };
 
 export default function ProfessorCard({
@@ -54,9 +54,19 @@ export default function ProfessorCard({
             {professor.nome}
           </h3>
 
-          <p className="text-slate-500 mt-2">
-            {professor.sala || 'Sala não informada'}
-          </p>
+          {/* E-mail logo abaixo da foto */}
+          {professor.email ? (
+            <a
+              href={`mailto:${professor.email}`}
+              className="inline-block text-slate-500 hover:text-[#0D3B66] transition mt-2 text-sm underline break-all"
+            >
+              {professor.email}
+            </a>
+          ) : (
+            <p className="text-slate-400 mt-2 text-sm">
+              E-mail não informado
+            </p>
+          )}
         </div>
 
         {/* Botão para abrir a biografia completa */}
@@ -139,7 +149,14 @@ export default function ProfessorCard({
                   className="w-20 h-20 rounded-full object-cover border-2 border-[#0D3B66] shrink-0"
                 />
                 <div>
-                  <p className="text-sm font-semibold text-slate-600">Sala: {professor.sala || 'Não informada'}</p>
+                  <p className="text-sm font-semibold text-slate-600">E-mail:</p>
+                  {professor.email ? (
+                    <a href={`mailto:${professor.email}`} className="text-sm text-[#0D3B66] underline font-medium">
+                      {professor.email}
+                    </a>
+                  ) : (
+                    <span className="text-sm text-slate-400">Não informado</span>
+                  )}
                 </div>
               </div>
 

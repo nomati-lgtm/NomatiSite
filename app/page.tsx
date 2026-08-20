@@ -8,7 +8,7 @@ import Link from 'next/link';
 interface Professor {
   id?: string | number;
   nome: string;
-  sala?: string;
+  email?: string; // Alterado de 'sala' para 'email'
   foto?: string;
   foto_url?: string;
   biografia?: string;
@@ -287,7 +287,15 @@ export default function Home() {
                   <h3 className="mt-5 text-xl font-bold text-[#0D3B66]">
                     {prof.nome}
                   </h3>
-                  <p className="text-slate-500 mt-2">{prof.sala}</p>
+                  {prof.email && (
+                    <a
+                      href={`mailto:${prof.email}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-slate-500 mt-2 block hover:text-[#0D3B66] transition text-sm"
+                    >
+                      {prof.email}
+                    </a>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 mt-5">
@@ -535,7 +543,16 @@ export default function Home() {
                   className="w-20 h-20 rounded-full object-cover border-2 border-[#0D3B66] shrink-0"
                 />
                 <div>
-                  <p className="text-sm font-semibold text-slate-600">Sala: {professorSelecionado.sala || 'Não informada'}</p>
+                  {professorSelecionado.email ? (
+                    <a
+                      href={`mailto:${professorSelecionado.email}`}
+                      className="text-sm font-semibold text-slate-600 hover:text-[#0D3B66] transition block"
+                    >
+                      E-mail: {professorSelecionado.email}
+                    </a>
+                  ) : (
+                    <p className="text-sm font-semibold text-slate-400">E-mail não informado</p>
+                  )}
                 </div>
               </div>
 
@@ -570,7 +587,7 @@ export default function Home() {
                     className="bg-[#0D3B66] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2D4F] transition"
                   >
                     Lattes
-                </a>
+                  </a>
                 )}
                 {professorSelecionado.linkedin && (
                   <a
